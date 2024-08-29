@@ -1,0 +1,21 @@
+{
+  "name": "unify-pay-flex",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "razorpay": "^2.9.4",
+    "stripe": "^16.8.0"
+  }
+}
