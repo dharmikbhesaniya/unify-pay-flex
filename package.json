@@ -1,21 +1,39 @@
 {
   "name": "unify-pay-flex",
   "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
+  "description": "A universal payment gateway SDK for Node.js",
+  "main": "dist/SDK.js",
+  "types": "dist/SDK.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/node": "^22.5.0",
-    "typescript": "^5.5.4"
-  },
+  "author": "dharmik bhesaniya",
+  "license": "MIT",
+  "keywords": [
+    "payment",
+    "gateway",
+    "stripe",
+    "razorpay",
+    "typescript",
+    "sdk"
+  ],
+  "files": [
+    "dist"
+  ],
   "dependencies": {
-    "razorpay": "^2.9.4",
-    "stripe": "^16.8.0"
+    "stripe": "^10.0.0",
+    "razorpay": "^2.8.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.5.2",
+    "@types/node": "^16.11.7"
+  },
+  "bugs": {
+    "url": "https://github.com/dharmikbhesaniya/unify-pay-flex/issues"
+  },
+  "homepage": "https://github.com/dharmikbhesaniya/unify-pay-flex#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dharmikbhesaniya/unify-pay-flex.git"
   }
 }
