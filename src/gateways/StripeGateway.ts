@@ -6,7 +6,7 @@ export class StripeGateway implements PaymentGateway {
   private stripe: Stripe;
 
   constructor(apiKey: string) {
-    this.stripe = new Stripe(apiKey, { apiVersion: "2024-06-20" });
+    this.stripe = new Stripe(apiKey, { apiVersion: "2022-08-01" });
   }
 
   async createCheckoutSession(data: any): Promise<any> {

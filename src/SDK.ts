@@ -3,6 +3,7 @@ import { PaymentGateway } from "./gateways/PaymentGateway";
 import { StripeGateway } from "./gateways/StripeGateway";
 import { RazorpayGateway } from "./gateways/RazorpayGateway";
 import { GatewayType } from "./PaymentProcessor";
+import { GatewayDataType } from "./types/createCheckoutSession";
 
 interface SDKConfig {
   stripeApiKey?: string;
@@ -30,15 +31,14 @@ export class UnifyPayFlexSDK {
     }
   }
 
-  public async createCheckoutSession(
-    gatewayType: GatewayType,
-    data: any
+  public async createCheckoutSession<T extends GatewayType>(
+    gatewayType: T,
+    data: GatewayDataType<T>
   ): Promise<any> {
     const gateway = this.gateways[gatewayType];
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-
     return gateway.createCheckoutSession(data);
   }
 

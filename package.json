@@ -21,12 +21,13 @@
     "dist"
   ],
   "dependencies": {
-    "stripe": "^10.0.0",
-    "razorpay": "^2.8.0"
+    "@stripe/stripe-js": "^4.4.0",
+    "razorpay": "^2.8.0",
+    "stripe": "^10.0.0"
   },
   "devDependencies": {
-    "typescript": "^4.5.2",
-    "@types/node": "^16.11.7"
+    "@types/node": "^16.11.7",
+    "typescript": "^4.5.2"
   },
   "bugs": {
     "url": "https://github.com/dharmikbhesaniya/unify-pay-flex/issues"
