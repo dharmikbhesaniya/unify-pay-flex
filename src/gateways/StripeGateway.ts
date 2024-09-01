@@ -9,6 +9,14 @@ export class StripeGateway implements PaymentGateway {
     this.stripe = new Stripe(apiKey, { apiVersion: "2022-08-01" });
   }
 
+  async createCustomer(data: any) {
+    console.log("data", data);
+
+    const customer = await this.stripe.customers.create(data);
+    console.log("customer", customer);
+    return customer;
+  }
+
   async createCheckoutSession(data: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -28,17 +36,6 @@ export class StripeGateway implements PaymentGateway {
     });
 
     return { id: session.id };
-  }
-
-  async createCustomer(data: any) {
-    console.log("data", data);
-
-    const customer = await this.stripe.customers.create({
-      email: "customer@example.com",
-      name: "John Doe",
-    });
-    console.log("customer", customer);
-    return customer;
   }
 
   async retrieveCustomer(customerId: string) {
@@ -66,13 +63,49 @@ export class StripeGateway implements PaymentGateway {
     return confirmedPaymentIntent;
   }
 
-  async createSubscription(customerId: string) {
+  async createStripePrice(
+    productId: string,
+    unitAmount: number,
+    currency: string,
+    interval: 'day' | 'week' | 'month' | 'year',
+    intervalCount: number = 1
+  ): Promise<Stripe.Price> {
+    const price = await this.stripe.prices.create({
+      unit_amount: unitAmount,
+      currency: currency,
+      recurring: {
+        interval: interval,
+        interval_count: intervalCount,
+      },
+      product: productId,
+    });
+
+    return price;
+  }
+
+  async createSubscription(customerId: string, data: any): Promise<any> {
+    const price = await this.createStripePrice('prod_XXXXXXXXXXXX', 2000, 'usd', 'month', 1);
     const subscription = await this.stripe.subscriptions.create({
       customer: customerId,
-      items: [
-        { price: "price_1Hh1X2FVHSK8VuybInKLcFxh" }, // Replace with your actual price ID
-      ],
+      items: [{ price: price.id }],
+      expand: ['latest_invoice.payment_intent'],
+      trial_period_days: data.trialPeriodDays || 0,
+      billing_cycle_anchor: Date.now(),
+      collection_method: 'charge_automatically',
+      default_payment_method: data.paymentMethodId,
+      metadata: data.metadata,
     });
+
     return subscription;
+  }
+
+  async retrieveSubscription(subscriptionId: string): Promise<any> {
+    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+    return subscription;
+  }
+
+  async cancelSubscription(subscriptionId: string): Promise<any> {
+    const canceledSubscription = await this.stripe.subscriptions.del(subscriptionId);
+    return canceledSubscription;
   }
 }

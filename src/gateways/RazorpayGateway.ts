@@ -25,4 +25,25 @@ export class RazorpayGateway implements PaymentGateway {
 
     return { id: order.id };
   }
+  async createSubscription(customerId: string, data: any): Promise<any> {
+    const subscription = await this.razorpay.subscriptions.create({
+      plan_id: data.planId,
+      total_count: data.totalCount || 12,
+      customer_notify: 1,
+      start_at: data.startAt || Math.floor(Date.now() / 1000),
+      // customer_id: customerId,
+    });
+
+    return subscription;
+  }
+
+  async retrieveSubscription(subscriptionId: string): Promise<any> {
+    const subscription = await this.razorpay.subscriptions.fetch(subscriptionId);
+    return subscription;
+  }
+
+  async cancelSubscription(subscriptionId: string): Promise<any> {
+    const canceledSubscription = await this.razorpay.subscriptions.cancel(subscriptionId);
+    return canceledSubscription;
+  }
 }
