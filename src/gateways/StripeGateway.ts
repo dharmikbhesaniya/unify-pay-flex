@@ -38,7 +38,7 @@ export class StripeGateway implements PaymentGateway {
       }
     });
 
-    return { data: session };
+    return { session };
   }
 
   async retrieveCustomer(customerId: string) {
