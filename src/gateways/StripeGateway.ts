@@ -33,9 +33,12 @@ export class StripeGateway implements PaymentGateway {
       mode: "payment",
       success_url: `${data.successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: data.cancelUrl,
+      payment_intent_data: {
+        metadata: { connectAccountPayments: 'true' },
+      }
     });
 
-    return { id: session.id };
+    return { session };
   }
 
   async retrieveCustomer(customerId: string) {
