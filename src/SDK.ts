@@ -54,20 +54,6 @@ export class UnifyPayFlexSDK {
     return gateway.createCustomer(data);
   }
 
-  public async createProduct(
-    gatewayType: GatewayType,
-    data: any
-  ): Promise<any> {
-    const gateway = this.gateways[gatewayType];
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    if (gateway && gateway.createProduct && gatewayType === GatewayType.STRIPE) {
-      return gateway.createProduct(data);
-    }
-  }
-
   public async createSubscription(gatewayType: GatewayType, customerId: string, data: any): Promise<any> {
     const gateway = this.gateways[gatewayType];
     if (!gateway) {
@@ -79,31 +65,5 @@ export class UnifyPayFlexSDK {
     }
 
     return gateway.createSubscription(customerId, data);
-  }
-
-  public async retrieveSubscription(gatewayType: GatewayType, subscriptionId: string): Promise<any> {
-    const gateway = this.gateways[gatewayType];
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    if (!gateway.retrieveSubscription) {
-      throw new Error(`${gatewayType} gateway does not support subscription retrieval.`);
-    }
-
-    return gateway.retrieveSubscription(subscriptionId);
-  }
-
-  public async cancelSubscription(gatewayType: GatewayType, subscriptionId: string): Promise<any> {
-    const gateway = this.gateways[gatewayType];
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    if (!gateway.cancelSubscription) {
-      throw new Error(`${gatewayType} gateway does not support subscription cancellation.`);
-    }
-
-    return gateway.cancelSubscription(subscriptionId);
   }
 }

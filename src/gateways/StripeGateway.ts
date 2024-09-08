@@ -17,12 +17,6 @@ export class StripeGateway implements PaymentGateway {
     return customer;
   }
 
-  async createProduct(data: any) {
-    const product = await this.stripe.products.create(data);
-    console.log("product", product);
-    return product;
-  }
-
   async createCheckoutSession(data: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -45,6 +39,50 @@ export class StripeGateway implements PaymentGateway {
     });
 
     return { session };
+  }
+
+  async createProduct(data: any) {
+    const product = await this.stripe.products.create(data);
+    return product;
+  }
+
+  async createPrice(data: any) {
+    const price = await this.stripe.prices.create({
+      unit_amount: data.amount,
+      currency: data.currency,
+      recurring: {
+        interval: data.interval,
+        interval_count: data.intervalCount || 1,
+      },
+      product: data.productId,
+    });
+    return price;
+  }
+
+  async createSubscription(customerId: string, data: any): Promise<any> {
+    const product = await this.createProduct({
+      name: data.planName,
+    });
+
+    const price = await this.createPrice({
+      productId: product.id,
+      amount: data.amount,
+      currency: data.currency,
+      interval: data.interval,
+      intervalCount: data.intervalCount || 1,
+    });
+
+    const subscription = await this.stripe.subscriptions.create({
+      customer: customerId,
+      items: [{ price: price.id }],
+      trial_period_days: data.trialPeriodDays || 0,
+      expand: ['latest_invoice.payment_intent'],
+      collection_method: 'charge_automatically',
+      default_payment_method: data.paymentMethodId,
+      metadata: data.metadata,
+    });
+
+    return subscription;
   }
 
   async retrieveCustomer(customerId: string) {
@@ -70,51 +108,5 @@ export class StripeGateway implements PaymentGateway {
       }
     );
     return confirmedPaymentIntent;
-  }
-
-  async createStripePrice(
-    productId: string,
-    unitAmount: number,
-    currency: string,
-    interval: 'day' | 'week' | 'month' | 'year',
-    intervalCount: number = 1
-  ): Promise<Stripe.Price> {
-    const price = await this.stripe.prices.create({
-      unit_amount: unitAmount,
-      currency: currency,
-      recurring: {
-        interval: interval,
-        interval_count: intervalCount,
-      },
-      product: productId,
-    });
-
-    return price;
-  }
-
-  async createSubscription(customerId: string, data: any): Promise<any> {
-    const price = await this.createStripePrice('prod_XXXXXXXXXXXX', 2000, 'usd', 'month', 1);
-    const subscription = await this.stripe.subscriptions.create({
-      customer: customerId,
-      items: [{ price: price.id }],
-      expand: ['latest_invoice.payment_intent'],
-      trial_period_days: data.trialPeriodDays || 0,
-      billing_cycle_anchor: Date.now(),
-      collection_method: 'charge_automatically',
-      default_payment_method: data.paymentMethodId,
-      metadata: data.metadata,
-    });
-
-    return subscription;
-  }
-
-  async retrieveSubscription(subscriptionId: string): Promise<any> {
-    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
-    return subscription;
-  }
-
-  async cancelSubscription(subscriptionId: string): Promise<any> {
-    const canceledSubscription = await this.stripe.subscriptions.del(subscriptionId);
-    return canceledSubscription;
   }
 }

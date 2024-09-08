@@ -5,5 +5,4 @@ export interface PaymentGateway {
   cancelSubscription?(subscriptionId: string): Promise<any>;
   createCheckoutSession(data: any): Promise<any>;
   createCustomer(data: any): Promise<any>;
-  createProduct?(data: any): Promise<any>;
 }
