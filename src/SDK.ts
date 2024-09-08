@@ -54,6 +54,20 @@ export class UnifyPayFlexSDK {
     return gateway.createCustomer(data);
   }
 
+  public async createProduct(
+    gatewayType: GatewayType,
+    data: any
+  ): Promise<any> {
+    const gateway = this.gateways[gatewayType];
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+
+    if (gateway && gateway.createProduct && gatewayType === GatewayType.STRIPE) {
+      return gateway.createProduct(data);
+    }
+  }
+
   public async createSubscription(gatewayType: GatewayType, customerId: string, data: any): Promise<any> {
     const gateway = this.gateways[gatewayType];
     if (!gateway) {
