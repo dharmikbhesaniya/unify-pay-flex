@@ -10,19 +10,16 @@ export class StripeGateway implements PaymentGateway {
   }
 
   async createCustomer(data: any) {
-    console.log("data", data);
-
     const customer = await this.stripe.customers.create(data);
-    console.log("customer", customer);
     return customer;
   }
 
   async createCheckoutSession(data: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: data.payment_method_types,
       line_items: data.items.map((item: any) => ({
         price_data: {
-          currency: "usd",
+          currency: item.currency,
           product_data: {
             name: item.name,
           },
