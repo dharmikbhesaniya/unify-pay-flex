@@ -14,6 +14,11 @@ export class StripeGateway implements PaymentGateway {
     return customer;
   }
 
+  async retrieveCustomer(customerId: string) {
+    const customer = await this.stripe.customers.retrieve(customerId);
+    return customer;
+  }
+
   async createCheckoutSession(data: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: data.payment_method_types,
@@ -82,9 +87,43 @@ export class StripeGateway implements PaymentGateway {
     return subscription;
   }
 
-  async retrieveCustomer(customerId: string) {
-    const customer = await this.stripe.customers.retrieve(customerId);
-    return customer;
+  public async verifyWebhook(signature: string, payload: Buffer, secret: string): Promise<any> {
+    try {
+      return this.stripe.webhooks.constructEvent(payload, signature, secret);
+    } catch (error) {
+      throw new Error(`Webhook verification failed: ${(error as Error).message}`);
+    }
+  }
+
+  public async handleEvent(event: any): Promise<any> {
+    switch (event.type) {
+      case 'checkout.session.completed':
+        console.log("Checkout session completed");
+        break;
+      case 'invoice.payment_succeeded':
+        console.log("Invoice Payment succeeded");
+        break;
+      case 'invoice.payment_failed':
+        console.log("Invoice Payment failed");
+        break;
+      case 'customer.subscription.created':
+        console.log("Subscription created:", event.data.object);
+        break;
+      case 'customer.subscription.updated':
+        console.log("Subscription updated:", event.data.object);
+        break;
+      case 'customer.subscription.deleted':
+        console.log("Subscription deleted:", event.data.object);
+        break;
+      case 'payment_intent.succeeded':
+        console.log("Payment intent succeeded:", event.data.object);
+        break;
+      case 'payment_intent.payment_failed':
+        console.log("Payment intent failed:", event.data.object);
+        break;
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
   }
 
   async createPaymentIntent(customerId: string) {

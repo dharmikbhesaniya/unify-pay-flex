@@ -8,8 +8,20 @@ export class RazorpayGateway implements PaymentGateway {
   constructor(apiKey: string, apiSecret: string) {
     this.razorpay = new Razorpay({ key_id: apiKey, key_secret: apiSecret });
   }
-  
+
   createCustomer(data: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  async retrieveCustomer(customerId: string) {
+    throw new Error("Method not implemented.");
+  }
+
+  async verifyWebhook(customerId: string) {
+    throw new Error("Method not implemented.");
+  }
+
+  async handleEvent(customerId: string) {
     throw new Error("Method not implemented.");
   }
 
