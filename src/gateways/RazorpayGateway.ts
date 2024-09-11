@@ -1,4 +1,3 @@
-// src/gateways/RazorpayGateway.ts
 import Razorpay from "razorpay";
 import { PaymentGateway } from "./PaymentGateway";
 
@@ -50,12 +49,16 @@ export class RazorpayGateway implements PaymentGateway {
   }
 
   async retrieveSubscription(subscriptionId: string): Promise<any> {
-    const subscription = await this.razorpay.subscriptions.fetch(subscriptionId);
+    const subscription = await this.razorpay.subscriptions.fetch(
+      subscriptionId
+    );
     return subscription;
   }
 
   async cancelSubscription(subscriptionId: string): Promise<any> {
-    const canceledSubscription = await this.razorpay.subscriptions.cancel(subscriptionId);
+    const canceledSubscription = await this.razorpay.subscriptions.cancel(
+      subscriptionId
+    );
     return canceledSubscription;
   }
 }

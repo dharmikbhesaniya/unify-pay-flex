@@ -1,4 +1,3 @@
-// src/gateways/StripeGateway.ts
 import Stripe from "stripe";
 import { PaymentGateway } from "./PaymentGateway";
 
@@ -36,8 +35,8 @@ export class StripeGateway implements PaymentGateway {
       success_url: `${data.successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: data.cancelUrl,
       payment_intent_data: {
-        metadata: { connectAccountPayments: 'true' },
-      }
+        metadata: { connectAccountPayments: "true" },
+      },
     });
 
     return { session };
@@ -78,8 +77,8 @@ export class StripeGateway implements PaymentGateway {
       customer: customerId,
       items: [{ price: price.id }],
       trial_period_days: data.trialPeriodDays || 0,
-      expand: ['latest_invoice.payment_intent'],
-      collection_method: 'charge_automatically',
+      expand: ["latest_invoice.payment_intent"],
+      collection_method: "charge_automatically",
       default_payment_method: data.paymentMethodId,
       metadata: data.metadata,
     });
@@ -87,38 +86,44 @@ export class StripeGateway implements PaymentGateway {
     return subscription;
   }
 
-  public async verifyWebhook(signature: string, payload: Buffer, secret: string): Promise<any> {
+  public async verifyWebhook(
+    signature: string,
+    payload: Buffer,
+    secret: string
+  ): Promise<any> {
     try {
       return this.stripe.webhooks.constructEvent(payload, signature, secret);
     } catch (error) {
-      throw new Error(`Webhook verification failed: ${(error as Error).message}`);
+      throw new Error(
+        `Webhook verification failed: ${(error as Error).message}`
+      );
     }
   }
 
   public async handleEvent(event: any): Promise<any> {
     switch (event.type) {
-      case 'checkout.session.completed':
+      case "checkout.session.completed":
         console.log("Checkout session completed");
         break;
-      case 'invoice.payment_succeeded':
+      case "invoice.payment_succeeded":
         console.log("Invoice Payment succeeded");
         break;
-      case 'invoice.payment_failed':
+      case "invoice.payment_failed":
         console.log("Invoice Payment failed");
         break;
-      case 'customer.subscription.created':
+      case "customer.subscription.created":
         console.log("Subscription created:", event.data.object);
         break;
-      case 'customer.subscription.updated':
+      case "customer.subscription.updated":
         console.log("Subscription updated:", event.data.object);
         break;
-      case 'customer.subscription.deleted':
+      case "customer.subscription.deleted":
         console.log("Subscription deleted:", event.data.object);
         break;
-      case 'payment_intent.succeeded':
+      case "payment_intent.succeeded":
         console.log("Payment intent succeeded:", event.data.object);
         break;
-      case 'payment_intent.payment_failed':
+      case "payment_intent.payment_failed":
         console.log("Payment intent failed:", event.data.object);
         break;
       default:
