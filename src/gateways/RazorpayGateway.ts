@@ -1,5 +1,5 @@
 import Razorpay from "razorpay";
-import { PaymentGateway } from "./PaymentGateway";
+import { PaymentGateway } from "@/gateways/PaymentGateway";
 
 export class RazorpayGateway implements PaymentGateway {
   private razorpay: Razorpay;

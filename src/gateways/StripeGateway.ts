@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { PaymentGateway } from "./PaymentGateway";
+import { PaymentGateway } from "@/gateways/PaymentGateway";
 
 export class StripeGateway implements PaymentGateway {
   private stripe: Stripe;

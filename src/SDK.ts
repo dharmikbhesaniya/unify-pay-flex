@@ -1,88 +1,32 @@
+import { CheckoutManager } from "@/feature/CheckoutManager";
+import { CustomerManager } from "@/feature/CustomerManager";
+import { EventManager } from "@/feature/EventManager";
+import { SubscriptionManager } from "@/feature/SubscriptionManager";
+import { WebhookManager } from "@/feature/WebhookManager";
 import { GatewayManager } from "./GatewayManager";
-import { GatewayType } from "./PaymentProcessor";
-import { GatewayDataType } from "./types/createCheckoutSession";
 import { SDKConfig } from "./types/SDK";
 
 export class UnifyPayFlexSDK {
   private gatewayManager: GatewayManager;
+  public customerManager!: CustomerManager;
+  public checkoutManager!: CheckoutManager;
+  public subscriptionManager!: SubscriptionManager;
+  public webhookManager!: WebhookManager;
+  public eventManager!: EventManager;
 
   constructor(config: SDKConfig) {
+    // gateway initialize
     this.gatewayManager = new GatewayManager(config);
+
+    // Initialize managers
+    this.initializeManagers();
   }
 
-  public async createCustomer(
-    gatewayType: GatewayType,
-    data: any
-  ): Promise<any> {
-    const gateway = this.gatewayManager.getGateway(gatewayType);
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    return gateway.createCustomer(data);
-  }
-
-  public async retrieveCustomer(
-    gatewayType: GatewayType,
-    data: any
-  ): Promise<any> {
-    const gateway = this.gatewayManager.getGateway(gatewayType);
-
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    return gateway.retrieveCustomer(data);
-  }
-
-  public async createCheckoutSession<T extends GatewayType>(
-    gatewayType: T,
-    data: GatewayDataType<T>
-  ): Promise<any> {
-    const gateway = this.gatewayManager.getGateway(gatewayType);
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-    return gateway.createCheckoutSession(data);
-  }
-
-  public async createSubscription(
-    gatewayType: GatewayType,
-    customerId: string,
-    data: any
-  ): Promise<any> {
-    const gateway = this.gatewayManager.getGateway(gatewayType);
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    if (!gateway.createSubscription) {
-      throw new Error(`${gatewayType} gateway does not support subscriptions.`);
-    }
-
-    return gateway.createSubscription(customerId, data);
-  }
-
-  public async verifyWebhook(
-    gatewayType: GatewayType,
-    data: any
-  ): Promise<any> {
-    const gateway = this.gatewayManager.getGateway(gatewayType);
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    const { signature, payload, secret } = data;
-
-    return gateway.verifyWebhook(payload, signature, secret);
-  }
-
-  public async handleEvent(gatewayType: GatewayType, event: any): Promise<any> {
-    const gateway = this.gatewayManager.getGateway(gatewayType);
-    if (!gateway) {
-      throw new Error(`${gatewayType} gateway is not configured.`);
-    }
-
-    return gateway.handleEvent(event);
+  private initializeManagers() {
+    this.customerManager = new CustomerManager(this.gatewayManager);
+    this.checkoutManager = new CheckoutManager(this.gatewayManager);
+    this.subscriptionManager = new SubscriptionManager(this.gatewayManager);
+    this.webhookManager = new WebhookManager(this.gatewayManager);
+    this.eventManager = new EventManager(this.gatewayManager);
   }
 }
