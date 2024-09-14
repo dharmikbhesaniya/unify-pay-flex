@@ -1,41 +1,20 @@
-// src/SDK.ts
-import { PaymentGateway } from "./gateways/PaymentGateway";
-import { StripeGateway } from "./gateways/StripeGateway";
-import { RazorpayGateway } from "./gateways/RazorpayGateway";
+import { GatewayManager } from "./GatewayManager";
 import { GatewayType } from "./PaymentProcessor";
 import { GatewayDataType } from "./types/createCheckoutSession";
-
-interface SDKConfig {
-  stripeApiKey?: string;
-  razorpayApiKey?: string;
-  razorpayApiSecret?: string;
-}
+import { SDKConfig } from "./types/SDK";
 
 export class UnifyPayFlexSDK {
-  private gateways: { [key in GatewayType]?: PaymentGateway };
+  private gatewayManager: GatewayManager;
 
   constructor(config: SDKConfig) {
-    this.gateways = {};
-
-    if (config.stripeApiKey) {
-      this.gateways[GatewayType.STRIPE] = new StripeGateway(
-        config.stripeApiKey
-      );
-    }
-
-    if (config.razorpayApiKey && config.razorpayApiSecret) {
-      this.gateways[GatewayType.RAZORPAY] = new RazorpayGateway(
-        config.razorpayApiKey,
-        config.razorpayApiSecret
-      );
-    }
+    this.gatewayManager = new GatewayManager(config);
   }
 
   public async createCustomer(
     gatewayType: GatewayType,
     data: any
   ): Promise<any> {
-    const gateway = this.gateways[gatewayType];
+    const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
@@ -47,7 +26,7 @@ export class UnifyPayFlexSDK {
     gatewayType: GatewayType,
     data: any
   ): Promise<any> {
-    const gateway = this.gateways[gatewayType];
+    const gateway = this.gatewayManager.getGateway(gatewayType);
 
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
@@ -60,15 +39,19 @@ export class UnifyPayFlexSDK {
     gatewayType: T,
     data: GatewayDataType<T>
   ): Promise<any> {
-    const gateway = this.gateways[gatewayType];
+    const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
     return gateway.createCheckoutSession(data);
   }
 
-  public async createSubscription(gatewayType: GatewayType, customerId: string, data: any): Promise<any> {
-    const gateway = this.gateways[gatewayType];
+  public async createSubscription(
+    gatewayType: GatewayType,
+    customerId: string,
+    data: any
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
@@ -80,8 +63,11 @@ export class UnifyPayFlexSDK {
     return gateway.createSubscription(customerId, data);
   }
 
-  public async verifyWebhook(gatewayType: GatewayType, data: any): Promise<any> {
-    const gateway = this.gateways[gatewayType];
+  public async verifyWebhook(
+    gatewayType: GatewayType,
+    data: any
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
@@ -92,7 +78,7 @@ export class UnifyPayFlexSDK {
   }
 
   public async handleEvent(gatewayType: GatewayType, event: any): Promise<any> {
-    const gateway = this.gateways[gatewayType];
+    const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
