@@ -169,7 +169,7 @@ To clone the repository and set up your development environment, follow these st
 2. **Clone your fork**:
 
     ```bash
-    git clone https://github.com/YOUR_USERNAME/unify-pay-flex.git
+    git clone https://github.com/dharmikbhesaniya/unify-pay-flex
     ```
 
 3. **Navigate into the cloned directory**:
