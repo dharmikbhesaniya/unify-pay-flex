@@ -23,7 +23,7 @@ export class RazorpayGateway implements PaymentGateway {
       amount: data.items.reduce((total: number, item: any) => total + item.price * item.quantity, 0) * 100,
       currency: data.items[0].currency,
       receipt: data.receipt || `receipt_${Date.now()}`,
-      payment_capture: data.instant_payment_capture,
+      payment_capture: data.instant_payment_capture || 1,
     });
     return order;
   }
