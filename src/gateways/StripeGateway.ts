@@ -39,7 +39,7 @@ export class StripeGateway implements PaymentGateway {
       },
     });
 
-    return { session };
+    return session;
   }
 
   async createProduct(data: any) {
