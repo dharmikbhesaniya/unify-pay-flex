@@ -36,6 +36,11 @@ export class RazorpayGateway implements PaymentGateway {
 
     return { id: order.id };
   }
+
+  async retrieveCheckoutSession(data: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
   async createSubscription(customerId: string, data: any): Promise<any> {
     const subscription = await this.razorpay.subscriptions.create({
       plan_id: data.planId,

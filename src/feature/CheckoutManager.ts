@@ -19,4 +19,15 @@ export class CheckoutManager {
     }
     return gateway.createCheckoutSession(data);
   }
+
+  public async retrieveCheckoutSession<T extends GatewayType>(
+    gatewayType: T,
+    data: GatewayDataType<T>
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.retrieveCheckoutSession(data);
+  }
 }

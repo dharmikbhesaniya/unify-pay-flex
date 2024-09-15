@@ -3,6 +3,7 @@ export interface PaymentGateway {
   retrieveSubscription?(subscriptionId: string): Promise<any>;
   cancelSubscription?(subscriptionId: string): Promise<any>;
   createCheckoutSession(data: any): Promise<any>;
+  retrieveCheckoutSession(id: any): Promise<any>;
   createCustomer(data: any): Promise<any>;
   retrieveCustomer(customerId: string): Promise<any>;
   verifyWebhook(

@@ -42,6 +42,11 @@ export class StripeGateway implements PaymentGateway {
     return session;
   }
 
+  async retrieveCheckoutSession(id: any): Promise<any> {
+    const session = await this.stripe.checkout.sessions.retrieve(id);
+    return session;
+  }
+
   async createProduct(data: any) {
     const product = await this.stripe.products.create(data);
     return product;
@@ -83,6 +88,11 @@ export class StripeGateway implements PaymentGateway {
       metadata: data.metadata,
     });
 
+    return subscription;
+  }
+
+  async retrieveSubscription(subscriptionId: string): Promise<any> {
+    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
     return subscription;
   }
 
