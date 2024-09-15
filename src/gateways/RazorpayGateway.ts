@@ -8,46 +8,56 @@ export class RazorpayGateway implements PaymentGateway {
     this.razorpay = new Razorpay({ key_id: apiKey, key_secret: apiSecret });
   }
 
-  createCustomer(data: any): Promise<any> {
-    throw new Error("Method not implemented.");
+  async createCustomer(data: any): Promise<any> {
+    const customer = await this.razorpay.customers.create(data);
+    return customer;
   }
 
   async retrieveCustomer(customerId: string) {
-    throw new Error("Method not implemented.");
-  }
-
-  async verifyWebhook(customerId: string) {
-    throw new Error("Method not implemented.");
-  }
-
-  async handleEvent(customerId: string) {
-    throw new Error("Method not implemented.");
+    const customer = await this.razorpay.customers.fetch(customerId);
+    return customer;
   }
 
   async createCheckoutSession(data: any): Promise<any> {
-    const options = {
-      amount: data.amount * 100, // amount in smallest currency unit
-      currency: "INR",
-      receipt: data.receipt,
-      payment_capture: 1,
-    };
-
-    const order = await this.razorpay.orders.create(options);
-
-    return { id: order.id };
+    const order = await this.razorpay.orders.create({
+      amount: data.items.reduce((total: number, item: any) => total + item.price * item.quantity, 0) * 100,
+      currency: data.items[0].currency,
+      receipt: data.receipt || `receipt_${Date.now()}`,
+      payment_capture: data.instant_payment_capture,
+    });
+    return order;
   }
 
-  async retrieveCheckoutSession(data: any): Promise<any> {
-    throw new Error("Method not implemented.");
+  async retrieveCheckoutSession(orderId: any): Promise<any> {
+    const order = await this.razorpay.orders.fetch(orderId)
+    return order;
+  }
+
+  async createPlan(data: any): Promise<any> {
+    const plan = await this.razorpay.plans.create({
+      period: data.period,
+      interval: data.interval_count,
+      item: {
+        name: data.planName,
+        description: data.description || "",
+        amount: data.amount * 100,
+        currency: data.currency,
+      },
+    });
+    return plan;
   }
 
   async createSubscription(customerId: string, data: any): Promise<any> {
+    const plan = await this.createPlan(data);
+
     const subscription = await this.razorpay.subscriptions.create({
-      plan_id: data.planId,
+      plan_id: plan.id,
       total_count: data.totalCount || 12,
+      quantity: data.quantity || 1,
       customer_notify: 1,
       start_at: data.startAt || Math.floor(Date.now() / 1000),
-      // customer_id: customerId,
+      expire_by: data.endAt,
+      notes: data.metadata,
     });
 
     return subscription;
@@ -60,10 +70,11 @@ export class RazorpayGateway implements PaymentGateway {
     return subscription;
   }
 
-  async cancelSubscription(subscriptionId: string): Promise<any> {
-    const canceledSubscription = await this.razorpay.subscriptions.cancel(
-      subscriptionId
-    );
-    return canceledSubscription;
+  async verifyWebhook(customerId: string) {
+    throw new Error("Method not implemented.");
+  }
+
+  async handleEvent(customerId: string) {
+    throw new Error("Method not implemented.");
   }
 }

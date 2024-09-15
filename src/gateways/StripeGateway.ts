@@ -57,7 +57,7 @@ export class StripeGateway implements PaymentGateway {
       unit_amount: data.amount,
       currency: data.currency,
       recurring: {
-        interval: data.interval,
+        interval: data.period,
         interval_count: data.intervalCount || 1,
       },
       product: data.productId,
@@ -74,7 +74,7 @@ export class StripeGateway implements PaymentGateway {
       productId: product.id,
       amount: data.amount,
       currency: data.currency,
-      interval: data.interval,
+      interval: data.period,
       intervalCount: data.intervalCount || 1,
     });
 
@@ -82,6 +82,7 @@ export class StripeGateway implements PaymentGateway {
       customer: customerId,
       items: [{ price: price.id }],
       trial_period_days: data.trialPeriodDays || 0,
+      cancel_at: data.endAt,
       expand: ["latest_invoice.payment_intent"],
       collection_method: "charge_automatically",
       default_payment_method: data.paymentMethodId,
