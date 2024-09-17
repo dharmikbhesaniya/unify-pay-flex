@@ -13,7 +13,7 @@ export class RazorpayGateway implements PaymentGateway {
     return customer;
   }
 
-  async retrieveCustomer(customerId: string) {
+  async retrieveCustomer(customerId: string): Promise<any> {
     const customer = await this.razorpay.customers.fetch(customerId);
     return customer;
   }
@@ -73,11 +73,11 @@ export class RazorpayGateway implements PaymentGateway {
     return subscription;
   }
 
-  async verifyWebhook() {
+  async verifyWebhook(): Promise<any> {
     throw new Error('Method not implemented.');
   }
 
-  async handleEvent() {
+  async handleEvent(): Promise<any> {
     throw new Error('Method not implemented.');
   }
 }

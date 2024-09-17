@@ -8,12 +8,12 @@ export class StripeGateway implements PaymentGateway {
     this.stripe = new Stripe(apiKey, { apiVersion: '2022-08-01' });
   }
 
-  async createCustomer(data: any) {
+  async createCustomer(data: any): Promise<any> {
     const customer = await this.stripe.customers.create(data);
     return customer;
   }
 
-  async retrieveCustomer(customerId: string) {
+  async retrieveCustomer(customerId: string): Promise<any> {
     const customer = await this.stripe.customers.retrieve(customerId);
     return customer;
   }
@@ -47,12 +47,12 @@ export class StripeGateway implements PaymentGateway {
     return session;
   }
 
-  async createProduct(data: any) {
+  async createProduct(data: any): Promise<any> {
     const product = await this.stripe.products.create(data);
     return product;
   }
 
-  async createPrice(data: any) {
+  async createPrice(data: any): Promise<any> {
     const price = await this.stripe.prices.create({
       unit_amount: data.amount,
       currency: data.currency,
@@ -143,7 +143,7 @@ export class StripeGateway implements PaymentGateway {
     }
   }
 
-  async createPaymentIntent(customerId: string) {
+  async createPaymentIntent(customerId: string): Promise<any> {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: 2000,
       currency: 'usd',
@@ -153,7 +153,7 @@ export class StripeGateway implements PaymentGateway {
     return paymentIntent;
   }
 
-  async confirmPaymentIntent(paymentIntentId: string) {
+  async confirmPaymentIntent(paymentIntentId: string): Promise<any> {
     const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(
       paymentIntentId,
       {

@@ -22,7 +22,7 @@ export class UnifyPayFlexSDK {
     this.initializeManagers();
   }
 
-  private initializeManagers() {
+  private initializeManagers(): void {
     this.customerManager = new CustomerManager(this.gatewayManager);
     this.checkoutManager = new CheckoutManager(this.gatewayManager);
     this.subscriptionManager = new SubscriptionManager(this.gatewayManager);
