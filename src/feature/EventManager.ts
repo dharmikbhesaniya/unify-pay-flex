@@ -13,6 +13,14 @@ export class EventManager {
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-    return gateway.handleEvent(event);
+
+    // Check if the handleEvent method exists before invoking it
+    if (typeof gateway.handleEvent === 'function') {
+      return gateway.handleEvent(event);
+    } else {
+      throw new Error(
+        `handleEvent is not implemented for ${gatewayType} gateway.`
+      );
+    }
   }
 }

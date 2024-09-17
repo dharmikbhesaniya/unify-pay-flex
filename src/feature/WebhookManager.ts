@@ -17,7 +17,14 @@ export class WebhookManager {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
 
-    const { signature, payload, secret } = data;
-    return gateway.verifyWebhook(payload, signature, secret);
+    // Check if the handleEvent method exists before invoking it
+    if (typeof gateway.verifyWebhook === 'function') {
+      const { signature, payload, secret } = data;
+      return gateway.verifyWebhook(payload, signature, secret);
+    } else {
+      throw new Error(
+        `handleEvent is not implemented for ${gatewayType} gateway.`
+      );
+    }
   }
 }
