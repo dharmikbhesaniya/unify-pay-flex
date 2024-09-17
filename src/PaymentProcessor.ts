@@ -1,4 +1,4 @@
 export enum GatewayType {
-  STRIPE = "stripe",
-  RAZORPAY = "razorpay",
+  STRIPE = 'stripe',
+  RAZORPAY = 'razorpay',
 }

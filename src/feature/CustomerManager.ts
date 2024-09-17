@@ -1,5 +1,5 @@
-import { GatewayManager } from "@/GatewayManager";
-import { GatewayType } from "@/PaymentProcessor";
+import { GatewayManager } from '@/GatewayManager';
+import { GatewayType } from '@/PaymentProcessor';
 
 export class CustomerManager {
   private gatewayManager: GatewayManager;

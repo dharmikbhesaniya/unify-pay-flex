@@ -1,6 +1,6 @@
-import { GatewayManager } from "@/GatewayManager";
-import { GatewayType } from "@/PaymentProcessor";
-import { GatewayDataType } from "@/types/createCheckoutSession";
+import { GatewayManager } from '@/GatewayManager';
+import { GatewayType } from '@/PaymentProcessor';
+import { GatewayDataType } from '@/types/createCheckoutSession';
 
 export class CheckoutManager {
   private gatewayManager: GatewayManager;

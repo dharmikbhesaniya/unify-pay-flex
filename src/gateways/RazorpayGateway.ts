@@ -1,5 +1,5 @@
-import Razorpay from "razorpay";
-import { PaymentGateway } from "@/gateways/PaymentGateway";
+import Razorpay from 'razorpay';
+import { PaymentGateway } from '@/gateways/PaymentGateway';
 
 export class RazorpayGateway implements PaymentGateway {
   private razorpay: Razorpay;
@@ -20,7 +20,11 @@ export class RazorpayGateway implements PaymentGateway {
 
   async createCheckoutSession(data: any): Promise<any> {
     const order = await this.razorpay.orders.create({
-      amount: data.items.reduce((total: number, item: any) => total + item.price * item.quantity, 0) * 100,
+      amount:
+        data.items.reduce(
+          (total: number, item: any) => total + item.price * item.quantity,
+          0
+        ) * 100,
       currency: data.items[0].currency,
       receipt: data.receipt || `receipt_${Date.now()}`,
       payment_capture: data.instant_payment_capture || 1,
@@ -29,7 +33,7 @@ export class RazorpayGateway implements PaymentGateway {
   }
 
   async retrieveCheckoutSession(orderId: any): Promise<any> {
-    const order = await this.razorpay.orders.fetch(orderId)
+    const order = await this.razorpay.orders.fetch(orderId);
     return order;
   }
 
@@ -39,7 +43,7 @@ export class RazorpayGateway implements PaymentGateway {
       interval: data.interval_count,
       item: {
         name: data.planName,
-        description: data.description || "",
+        description: data.description || '',
         amount: data.amount * 100,
         currency: data.currency,
       },
@@ -64,17 +68,16 @@ export class RazorpayGateway implements PaymentGateway {
   }
 
   async retrieveSubscription(subscriptionId: string): Promise<any> {
-    const subscription = await this.razorpay.subscriptions.fetch(
-      subscriptionId
-    );
+    const subscription =
+      await this.razorpay.subscriptions.fetch(subscriptionId);
     return subscription;
   }
 
-  async verifyWebhook(customerId: string) {
-    throw new Error("Method not implemented.");
+  async verifyWebhook() {
+    throw new Error('Method not implemented.');
   }
 
-  async handleEvent(customerId: string) {
-    throw new Error("Method not implemented.");
+  async handleEvent() {
+    throw new Error('Method not implemented.');
   }
 }

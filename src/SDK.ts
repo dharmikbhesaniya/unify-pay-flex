@@ -1,10 +1,10 @@
-import { CheckoutManager } from "@/feature/CheckoutManager";
-import { CustomerManager } from "@/feature/CustomerManager";
-import { EventManager } from "@/feature/EventManager";
-import { SubscriptionManager } from "@/feature/SubscriptionManager";
-import { WebhookManager } from "@/feature/WebhookManager";
-import { GatewayManager } from "./GatewayManager";
-import { SDKConfig } from "./types/SDK";
+import { CheckoutManager } from '@/feature/CheckoutManager';
+import { CustomerManager } from '@/feature/CustomerManager';
+import { EventManager } from '@/feature/EventManager';
+import { SubscriptionManager } from '@/feature/SubscriptionManager';
+import { WebhookManager } from '@/feature/WebhookManager';
+import { GatewayManager } from './GatewayManager';
+import { SDKConfig } from './types/SDK';
 
 export class UnifyPayFlexSDK {
   private gatewayManager: GatewayManager;

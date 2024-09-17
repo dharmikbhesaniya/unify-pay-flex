@@ -1,8 +1,8 @@
-import { PaymentGateway } from "./gateways/PaymentGateway";
-import { StripeGateway } from "./gateways/StripeGateway";
-import { RazorpayGateway } from "./gateways/RazorpayGateway";
-import { GatewayType } from "./PaymentProcessor";
-import { SDKConfig } from "./types/SDK";
+import { PaymentGateway } from './gateways/PaymentGateway';
+import { StripeGateway } from './gateways/StripeGateway';
+import { RazorpayGateway } from './gateways/RazorpayGateway';
+import { GatewayType } from './PaymentProcessor';
+import { SDKConfig } from './types/SDK';
 
 export class GatewayManager {
   private gateways: { [key in GatewayType]?: PaymentGateway } = {};

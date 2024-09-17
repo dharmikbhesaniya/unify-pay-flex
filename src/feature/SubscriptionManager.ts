@@ -1,5 +1,5 @@
-import { GatewayManager } from "@/GatewayManager";
-import { GatewayType } from "@/PaymentProcessor";
+import { GatewayManager } from '@/GatewayManager';
+import { GatewayType } from '@/PaymentProcessor';
 
 export class SubscriptionManager {
   private gatewayManager: GatewayManager;
@@ -27,7 +27,7 @@ export class SubscriptionManager {
 
   public async retrieveSubscription(
     gatewayType: GatewayType,
-    subscriptionId: string,
+    subscriptionId: string
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {

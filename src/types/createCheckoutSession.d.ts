@@ -1,4 +1,4 @@
-import { Stripe } from "@stripe/stripe-js";
+import { Stripe } from '@stripe/stripe-js';
 
 interface RazorpayCheckoutData {
   amount: number;
@@ -11,5 +11,5 @@ interface RazorpayCheckoutData {
 type GatewayDataType<T extends GatewayType> = T extends GatewayType.STRIPE
   ? Stripe.Checkout.SessionCreateParams
   : T extends GatewayType.RAZORPAY
-  ? RazorpayCheckoutData
-  : never;
+    ? RazorpayCheckoutData
+    : never;

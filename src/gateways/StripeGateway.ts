@@ -1,11 +1,11 @@
-import Stripe from "stripe";
-import { PaymentGateway } from "@/gateways/PaymentGateway";
+import Stripe from 'stripe';
+import { PaymentGateway } from '@/gateways/PaymentGateway';
 
 export class StripeGateway implements PaymentGateway {
   private stripe: Stripe;
 
   constructor(apiKey: string) {
-    this.stripe = new Stripe(apiKey, { apiVersion: "2022-08-01" });
+    this.stripe = new Stripe(apiKey, { apiVersion: '2022-08-01' });
   }
 
   async createCustomer(data: any) {
@@ -31,11 +31,11 @@ export class StripeGateway implements PaymentGateway {
         },
         quantity: item.quantity,
       })),
-      mode: "payment",
+      mode: 'payment',
       success_url: `${data.successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: data.cancelUrl,
       payment_intent_data: {
-        metadata: { connectAccountPayments: "true" },
+        metadata: { connectAccountPayments: 'true' },
       },
     });
 
@@ -83,8 +83,8 @@ export class StripeGateway implements PaymentGateway {
       items: [{ price: price.id }],
       trial_period_days: data.trialPeriodDays || 0,
       cancel_at: data.endAt,
-      expand: ["latest_invoice.payment_intent"],
-      collection_method: "charge_automatically",
+      expand: ['latest_invoice.payment_intent'],
+      collection_method: 'charge_automatically',
       default_payment_method: data.paymentMethodId,
       metadata: data.metadata,
     });
@@ -93,7 +93,8 @@ export class StripeGateway implements PaymentGateway {
   }
 
   async retrieveSubscription(subscriptionId: string): Promise<any> {
-    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+    const subscription =
+      await this.stripe.subscriptions.retrieve(subscriptionId);
     return subscription;
   }
 
@@ -113,29 +114,29 @@ export class StripeGateway implements PaymentGateway {
 
   public async handleEvent(event: any): Promise<any> {
     switch (event.type) {
-      case "checkout.session.completed":
-        console.log("Checkout session completed");
+      case 'checkout.session.completed':
+        console.log('Checkout session completed');
         break;
-      case "invoice.payment_succeeded":
-        console.log("Invoice Payment succeeded");
+      case 'invoice.payment_succeeded':
+        console.log('Invoice Payment succeeded');
         break;
-      case "invoice.payment_failed":
-        console.log("Invoice Payment failed");
+      case 'invoice.payment_failed':
+        console.log('Invoice Payment failed');
         break;
-      case "customer.subscription.created":
-        console.log("Subscription created:", event.data.object);
+      case 'customer.subscription.created':
+        console.log('Subscription created:', event.data.object);
         break;
-      case "customer.subscription.updated":
-        console.log("Subscription updated:", event.data.object);
+      case 'customer.subscription.updated':
+        console.log('Subscription updated:', event.data.object);
         break;
-      case "customer.subscription.deleted":
-        console.log("Subscription deleted:", event.data.object);
+      case 'customer.subscription.deleted':
+        console.log('Subscription deleted:', event.data.object);
         break;
-      case "payment_intent.succeeded":
-        console.log("Payment intent succeeded:", event.data.object);
+      case 'payment_intent.succeeded':
+        console.log('Payment intent succeeded:', event.data.object);
         break;
-      case "payment_intent.payment_failed":
-        console.log("Payment intent failed:", event.data.object);
+      case 'payment_intent.payment_failed':
+        console.log('Payment intent failed:', event.data.object);
         break;
       default:
         console.log(`Unhandled event type: ${event.type}`);
@@ -145,9 +146,9 @@ export class StripeGateway implements PaymentGateway {
   async createPaymentIntent(customerId: string) {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: 2000,
-      currency: "usd",
+      currency: 'usd',
       customer: customerId,
-      payment_method_types: ["card"],
+      payment_method_types: ['card'],
     });
     return paymentIntent;
   }
@@ -156,7 +157,7 @@ export class StripeGateway implements PaymentGateway {
     const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(
       paymentIntentId,
       {
-        payment_method: "pm_card_visa",
+        payment_method: 'pm_card_visa',
       }
     );
     return confirmedPaymentIntent;
