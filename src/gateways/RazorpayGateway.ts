@@ -72,12 +72,4 @@ export class RazorpayGateway implements PaymentGateway {
       await this.razorpay.subscriptions.fetch(subscriptionId);
     return subscription;
   }
-
-  async verifyWebhook(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  async handleEvent(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
 }
