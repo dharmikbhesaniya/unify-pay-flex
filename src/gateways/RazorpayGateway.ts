@@ -1,5 +1,6 @@
 import Razorpay from 'razorpay';
 import { PaymentGateway } from '@/gateways/PaymentGateway';
+import { UnifyPayload } from '@/types/createCheckoutSession';
 
 export class RazorpayGateway implements PaymentGateway {
   private razorpay: Razorpay;
@@ -18,18 +19,44 @@ export class RazorpayGateway implements PaymentGateway {
     return customer;
   }
 
-  async createCheckoutSession(data: any): Promise<any> {
+  async createCheckoutSession(data: UnifyPayload): Promise<any> {
     const order = await this.razorpay.orders.create({
       amount:
         data.items.reduce(
           (total: number, item: any) => total + item.price * item.quantity,
           0
         ) * 100,
-      currency: data.items[0].currency,
+      currency: data.currency,
       receipt: data.receipt || `receipt_${Date.now()}`,
-      payment_capture: data.instant_payment_capture || 1,
+      payment_capture: data.instant_payment_capture || true,
+      notes: data.notes,
+      customer_id: data.customer_id,
+      bank_account: data.bank_account,
+      partial_payment: data.partial_payment || false,
+      first_payment_min_amount: data.first_payment_min_amount,
+      offer_id: data.offer_id,
+      customer_details: {
+        email: data.customer_details?.email || "",
+        contact: data.customer_details?.phone || "",
+        name: data.customer_details?.name || "",
+        shipping_address: data.shipping_address,
+        billing_address: data.billing_address,
+      },
+      method: data.payment_method || "card",
     });
     return order;
+  }
+
+  async retrieveCheckoutSessionLineItems(id: any): Promise<any> {
+    throw new Error("Method not implemented")
+  }
+
+  async retrieveAllCheckoutSessions(limit: number): Promise<any> {
+    throw new Error("Method not implemented")
+  }
+
+  async expireCheckoutSession(id: any): Promise<any> {
+    throw new Error("Method not implemented")
   }
 
   async retrieveCheckoutSession(orderId: any): Promise<any> {

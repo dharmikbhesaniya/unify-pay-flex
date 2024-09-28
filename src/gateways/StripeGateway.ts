@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { PaymentGateway } from '@/gateways/PaymentGateway';
+import { UnifyPayload } from '@/types/createCheckoutSession';
 
 export class StripeGateway implements PaymentGateway {
   private stripe: Stripe;
@@ -18,12 +19,12 @@ export class StripeGateway implements PaymentGateway {
     return customer;
   }
 
-  async createCheckoutSession(data: any): Promise<any> {
+  async createCheckoutSession(data: UnifyPayload): Promise<any> {
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: data.payment_method_types,
       line_items: data.items.map((item: any) => ({
         price_data: {
-          currency: item.currency,
+          currency: data.currency,
           product_data: {
             name: item.name,
           },
@@ -31,19 +32,55 @@ export class StripeGateway implements PaymentGateway {
         },
         quantity: item.quantity,
       })),
-      mode: 'payment',
+      mode: data.mode || 'payment',
+      currency: data.currency,
       success_url: `${data.successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: data.cancelUrl,
       payment_intent_data: {
-        metadata: { connectAccountPayments: 'true' },
+        metadata: { ...data.metadata },
+        setup_future_usage: data.payment_intent_data?.setup_future_usage || undefined
       },
+      customer: data.customer_id,
+      customer_email: data.customer_details?.email,
+      customer_creation: data.customer_creation,
+      customer_update: data.customer_update,
+      client_reference_id: data.customer_id,
+      shipping_address_collection: data.shipping_address_collection
+        ? {
+          allowed_countries: data.shipping_address_collection.allowed_countries as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
+        }
+        : undefined,
+      billing_address_collection: data.billing_address_collection || 'auto',
+      automatic_tax: { enabled: data.automatic_tax?.enabled || false },
+      allow_promotion_codes: data.allow_promotion_codes,
+      consent_collection: data.consent_collection,
+      discounts: data.discounts,
+      expires_at: data.expires_at,
+      after_expiration: data.after_expiration,
+      tax_id_collection: data.tax_id_collection
     });
 
     return session;
   }
 
+
   async retrieveCheckoutSession(id: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.retrieve(id);
+    return session;
+  }
+
+  async retrieveCheckoutSessionLineItems(id: any): Promise<any> {
+    const session = await this.stripe.checkout.sessions.listLineItems(id);
+    return session;
+  }
+
+  async retrieveAllCheckoutSessions(limit: number): Promise<any> {
+    const session = await this.stripe.checkout.sessions.list({ limit: limit });
+    return session;
+  }
+
+  async expireCheckoutSession(id: any): Promise<any> {
+    const session = await this.stripe.checkout.sessions.expire(id);
     return session;
   }
 

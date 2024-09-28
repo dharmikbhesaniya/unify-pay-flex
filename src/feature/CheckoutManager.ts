@@ -22,12 +22,45 @@ export class CheckoutManager {
 
   public async retrieveCheckoutSession<T extends GatewayType>(
     gatewayType: T,
-    data: GatewayDataType<T>
+    id: string
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-    return gateway.retrieveCheckoutSession(data);
+    return gateway.retrieveCheckoutSession(id);
+  }
+
+  public async retrieveCheckoutSessionLineItems<T extends GatewayType>(
+    gatewayType: T,
+    id: string
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.retrieveCheckoutSessionLineItems(id);
+  }
+
+  public async retrieveAllCheckoutSessions<T extends GatewayType>(
+    gatewayType: T,
+    limit: number
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.retrieveAllCheckoutSessions(limit);
+  }
+
+  public async expireCheckoutSession<T extends GatewayType>(
+    gatewayType: T,
+    id: string
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.expireCheckoutSession(id);
   }
 }
