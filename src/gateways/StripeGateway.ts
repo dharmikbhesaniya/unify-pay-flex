@@ -6,7 +6,7 @@ export class StripeGateway implements PaymentGateway {
   private stripe: Stripe;
 
   constructor(apiKey: string) {
-    this.stripe = new Stripe(apiKey, { apiVersion: '2022-08-01' });
+    this.stripe = new Stripe(apiKey, { apiVersion: '2024-06-20' });
   }
 
   async createCustomer(data: any): Promise<any> {
@@ -37,11 +37,14 @@ export class StripeGateway implements PaymentGateway {
       success_url: `${data.successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: data.cancelUrl,
       payment_intent_data: {
-        metadata: { ...data.metadata },
+        metadata: { ...data.payment_intent_data?.metadata },
         setup_future_usage: data.payment_intent_data?.setup_future_usage || undefined
       },
       customer: data.customer_id,
       customer_email: data.customer_details?.email,
+      phone_number_collection: {
+        enabled: data.phone_number_collection || true,
+      },
       customer_creation: data.customer_creation,
       customer_update: data.customer_update,
       client_reference_id: data.customer_id,
@@ -57,12 +60,29 @@ export class StripeGateway implements PaymentGateway {
       discounts: data.discounts,
       expires_at: data.expires_at,
       after_expiration: data.after_expiration,
-      tax_id_collection: data.tax_id_collection
+      tax_id_collection: data.tax_id_collection,
+      shipping_options: data.shipping_options
+        ? data.shipping_options.map((option: any) => ({
+          shipping_rate: option.shipping_rate,
+          shipping_rate_data: option.shipping_rate_data,
+          shipping_amount: option.shipping_amount,
+        }))
+        : undefined,
+      submit_type: data.submit_type,
+      metadata: data.notes,
+      ui_mode: data.ui_mode,
+
+      // In Progress
+      return_url: "",
+      redirect_on_completion: "always",
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {}
+      },
     });
 
     return session;
   }
-
 
   async retrieveCheckoutSession(id: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.retrieve(id);
@@ -81,6 +101,27 @@ export class StripeGateway implements PaymentGateway {
 
   async expireCheckoutSession(id: any): Promise<any> {
     const session = await this.stripe.checkout.sessions.expire(id);
+    return session;
+  }
+
+  async invoiceCreation(data: any): Promise<any> {
+    // invoice_creation: {
+    //   enabled: true,
+    //   invoice_data: {
+    //     account_tax_ids: "",
+    //     custom_fields: {},
+    //     description: "",
+    //     issuer: {
+    //       account: "",
+    //     },
+    //     footer: "",
+    //     metadata: {},
+    //     rendering_options: {
+    //       amount_tax_display: "include_inclusive_tax",
+    //     }
+    //   }
+    // },
+    const session = await this.stripe.invoices.create(data);
     return session;
   }
 
@@ -186,6 +227,7 @@ export class StripeGateway implements PaymentGateway {
       currency: 'usd',
       customer: customerId,
       payment_method_types: ['card'],
+      capture_method: "automatic",
     });
     return paymentIntent;
   }

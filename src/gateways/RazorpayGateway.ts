@@ -42,7 +42,8 @@ export class RazorpayGateway implements PaymentGateway {
         shipping_address: data.shipping_address,
         billing_address: data.billing_address,
       },
-      method: data.payment_method || "card",
+      method: data?.payment_method_types?.length && data?.payment_method_types[0] || "card",
+      shipping_fee: data.shipping_fee,
     });
     return order;
   }
@@ -98,5 +99,10 @@ export class RazorpayGateway implements PaymentGateway {
     const subscription =
       await this.razorpay.subscriptions.fetch(subscriptionId);
     return subscription;
+  }
+
+  async capturePayment(paymentId: string, amount: number | string, currency: string): Promise<any> {
+    const capture = await this.razorpay.payments.capture(paymentId, amount, currency);
+    return capture;
   }
 }
