@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { PaymentGateway } from '@/gateways/PaymentGateway';
 import { UnifyPayload } from '@/types/createCheckoutSession';
+import { UnifyCustomerPayload } from '@/types/createCustomer';
 
 export class StripeGateway implements PaymentGateway {
   private stripe: Stripe;
@@ -9,13 +10,44 @@ export class StripeGateway implements PaymentGateway {
     this.stripe = new Stripe(apiKey, { apiVersion: '2024-06-20' });
   }
 
-  async createCustomer(data: any): Promise<any> {
-    const customer = await this.stripe.customers.create(data);
+  async createCustomer(data: UnifyCustomerPayload): Promise<any> {
+    const customer = await this.stripe.customers.create({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      description: data.description,
+      address: data.address ? {
+        line1: data.address.line1,
+        line2: data.address.line2,
+        city: data.address.city,
+        state: data.address.state,
+        postal_code: data.address.postal_code,
+        country: data.address.country
+      } : undefined,
+      metadata: data.notes,
+      balance: data.balance,
+      cash_balance: data.cash_balance,
+      coupon: data.coupon,
+      invoice_prefix: data.invoice_prefix,
+      invoice_settings: data.invoice_settings,
+      next_invoice_sequence: data.next_invoice_sequence,
+      preferred_locales: data.preferred_locales,
+      promotion_code: data.promotion_code,
+      source: data.source,
+      tax: data.tax,
+      tax_exempt: data.tax_exempt,
+      test_clock: data.test_clock,
+    });
     return customer;
   }
 
   async retrieveCustomer(customerId: string): Promise<any> {
     const customer = await this.stripe.customers.retrieve(customerId);
+    return customer;
+  }
+
+  async retrieveAllCustomers(limit: number): Promise<any> {
+    const customer = await this.stripe.customers.list({ limit: limit });
     return customer;
   }
 
@@ -71,14 +103,9 @@ export class StripeGateway implements PaymentGateway {
       submit_type: data.submit_type,
       metadata: data.notes,
       ui_mode: data.ui_mode,
-
-      // In Progress
-      return_url: "",
-      redirect_on_completion: "always",
-      invoice_creation: {
-        enabled: true,
-        invoice_data: {}
-      },
+      return_url: data.return_url,
+      redirect_on_completion: data.redirect_on_completion,
+      invoice_creation: data.invoice_creation,
     });
 
     return session;

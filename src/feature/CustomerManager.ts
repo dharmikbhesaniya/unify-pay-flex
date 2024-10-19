@@ -1,5 +1,6 @@
 import { GatewayManager } from '@/GatewayManager';
 import { GatewayType } from '@/PaymentProcessor';
+import { UnifyCustomerPayload } from '@/types/createCustomer';
 
 export class CustomerManager {
   private gatewayManager: GatewayManager;
@@ -10,7 +11,7 @@ export class CustomerManager {
 
   public async createCustomer(
     gatewayType: GatewayType,
-    data: any
+    data: UnifyCustomerPayload
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {

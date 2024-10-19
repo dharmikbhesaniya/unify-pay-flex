@@ -1,6 +1,7 @@
 import Razorpay from 'razorpay';
 import { PaymentGateway } from '@/gateways/PaymentGateway';
 import { UnifyPayload } from '@/types/createCheckoutSession';
+import { UnifyCustomerPayload } from '@/types/createCustomer';
 
 export class RazorpayGateway implements PaymentGateway {
   private razorpay: Razorpay;
@@ -9,8 +10,15 @@ export class RazorpayGateway implements PaymentGateway {
     this.razorpay = new Razorpay({ key_id: apiKey, key_secret: apiSecret });
   }
 
-  async createCustomer(data: any): Promise<any> {
-    const customer = await this.razorpay.customers.create(data);
+  async createCustomer(data: UnifyCustomerPayload): Promise<any> {
+    const customer = await this.razorpay.customers.create({
+      name: data.name,
+      email: data.email,
+      contact: data.phone,
+      notes: data.notes,
+      fail_existing: data.fail_existing,
+      gstin: data.gstin
+    });
     return customer;
   }
 

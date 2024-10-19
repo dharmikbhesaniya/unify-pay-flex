@@ -56,8 +56,11 @@ interface UnifyPayload {
   submit_type?: Stripe.Checkout.SessionCreateParams.SubmitType | undefined; // Stripe | Optional
   allow_promotion_codes?: boolean; // Stripe | Optional
   automatic_tax?: { enabled: boolean }; // Stripe | Optional
+  return_url?: string; // Stripe | Optional
+  redirect_on_completion?: 'always' | 'if_required' | 'never'; // Stripe | Optional
+  invoice_creation?: Stripe.Checkout.SessionCreateParams.InvoiceCreation | undefined // Stripe | Optional
 
-  
+
   receipt?: string; // Razorpay | Optional
   instant_payment_capture?: boolean; // Razorpay | Optional
   partial_payment?: boolean; // Razorpay | Optional
@@ -65,7 +68,7 @@ interface UnifyPayload {
   offer_id?: string; // Razorpay | Optional 
   bank_account?: Orders.RazorpayOrderBankDetailsCreateRequestBody | undefined; // Razorpay | Optional 
   shipping_fee?: number | undefined; // Razorpay | Optional 
-  shipping_address: { // Razorpay | Optional 
+  shipping_address: { // Razorpay | Required 
     line1: string;
     line2: string;
     city: string;
@@ -73,7 +76,7 @@ interface UnifyPayload {
     postal_code: string;
     country: string;
   };
-  billing_address: { // Razorpay | Optional 
+  billing_address: { // Razorpay | Required 
     line1: string;
     line2: string;
     city: string;
