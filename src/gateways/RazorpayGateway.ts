@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay';
 import { PaymentGateway } from '@/gateways/PaymentGateway';
-import { UnifyPayload } from '@/types/createCheckoutSession';
+import { UpdateCheckoutSessionPayload, CreateCheckoutSessionPayload } from '@/types/createCheckoutSession';
 import { UnifyCustomerPayload } from '@/types/createCustomer';
 
 export class RazorpayGateway implements PaymentGateway {
@@ -22,12 +22,40 @@ export class RazorpayGateway implements PaymentGateway {
     return customer;
   }
 
+  async updateCustomer(data: UnifyCustomerPayload, customerId: string): Promise<any> {
+    const updatedCustomer = await this.razorpay.customers.edit(customerId, {
+      name: data.name,
+      email: data.email,
+      contact: data.phone,
+    });
+    return updatedCustomer;
+  }
+
   async retrieveCustomer(customerId: string): Promise<any> {
     const customer = await this.razorpay.customers.fetch(customerId);
     return customer;
   }
 
-  async createCheckoutSession(data: UnifyPayload): Promise<any> {
+  async retrieveAllCustomers(limit: number): Promise<any> {
+    const customers = await this.razorpay.customers.all({
+      count: limit,
+    });
+    return customers.items;
+  }
+
+  async deleteCustomer(): Promise<any> {
+    throw new Error("The deleteCustomer method does not exist in Razorpay.");
+  }
+
+  async searchCustomers(query: string, limit: number): Promise<any> {
+    const customers = await this.retrieveAllCustomers(limit);
+    const filteredCustomers = customers.filter((customer: any) =>
+      customer.name.includes(query) || customer.email.includes(query) || customer.contact.includes(query)
+    );
+    return filteredCustomers.slice(0, limit);
+  }
+
+  async createCheckoutSession(data: CreateCheckoutSessionPayload): Promise<any> {
     const order = await this.razorpay.orders.create({
       amount:
         data.items.reduce(
@@ -56,21 +84,29 @@ export class RazorpayGateway implements PaymentGateway {
     return order;
   }
 
-  async retrieveCheckoutSessionLineItems(id: any): Promise<any> {
-    throw new Error("Method not implemented")
-  }
-
-  async retrieveAllCheckoutSessions(limit: number): Promise<any> {
-    throw new Error("Method not implemented")
-  }
-
-  async expireCheckoutSession(id: any): Promise<any> {
-    throw new Error("Method not implemented")
+  async updateCheckoutSession(data: UpdateCheckoutSessionPayload, orderId: any): Promise<any> {
+    const order = await this.razorpay.orders.edit(orderId, {
+      notes: data.notes
+    });
+    return order;
   }
 
   async retrieveCheckoutSession(orderId: any): Promise<any> {
     const order = await this.razorpay.orders.fetch(orderId);
     return order;
+  }
+
+  async retrieveCheckoutSessionLineItems(): Promise<any> {
+    throw new Error("The retrieveCheckoutSessionLineItems method does not exist in Razorpay.");
+  }
+
+  async retrieveAllCheckoutSessions(limit: number): Promise<any> {
+    const order = await this.razorpay.orders.all({ count: limit });
+    return order;
+  }
+
+  async expireCheckoutSession(): Promise<any> {
+    throw new Error("The expireCheckoutSession method does not exist in Razorpay.");
   }
 
   async createPlan(data: any): Promise<any> {

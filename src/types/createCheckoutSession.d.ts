@@ -14,7 +14,7 @@ type GatewayDataType<T extends GatewayType> = T extends GatewayType.STRIPE
   ? RazorpayCheckoutData
   : never;
 
-interface UnifyPayload {
+interface CreateCheckoutSessionPayload {
   amount: number; // Stripe and Razorpay | Required
   currency: string; // Stripe and Razorpay | Required
   items: Array<{ // Stripe and Razorpay | Required
@@ -84,4 +84,8 @@ interface UnifyPayload {
     postal_code: string;
     country: string;
   };
+}
+
+interface UpdateCheckoutSessionPayload {
+  notes?: Record<string, any>; // Optional
 }

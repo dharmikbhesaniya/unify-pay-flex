@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { PaymentGateway } from '@/gateways/PaymentGateway';
-import { UnifyPayload } from '@/types/createCheckoutSession';
+import { UpdateCheckoutSessionPayload, CreateCheckoutSessionPayload } from '@/types/createCheckoutSession';
 import { UnifyCustomerPayload } from '@/types/createCustomer';
 
 export class StripeGateway implements PaymentGateway {
@@ -41,6 +41,37 @@ export class StripeGateway implements PaymentGateway {
     return customer;
   }
 
+  async updateCustomer(data: UnifyCustomerPayload, customerId: string): Promise<any> {
+    const customer = await this.stripe.customers.update(customerId, {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      description: data.description,
+      address: data.address ? {
+        line1: data.address.line1,
+        line2: data.address.line2,
+        city: data.address.city,
+        state: data.address.state,
+        postal_code: data.address.postal_code,
+        country: data.address.country
+      } : undefined,
+      metadata: data.notes,
+      balance: data.balance,
+      default_source: data.default_source,
+      cash_balance: data.cash_balance,
+      coupon: data.coupon,
+      invoice_prefix: data.invoice_prefix,
+      invoice_settings: data.invoice_settings,
+      next_invoice_sequence: data.next_invoice_sequence,
+      preferred_locales: data.preferred_locales,
+      promotion_code: data.promotion_code,
+      source: data.source,
+      tax: data.tax,
+      tax_exempt: data.tax_exempt,
+    });
+    return customer;
+  }
+
   async retrieveCustomer(customerId: string): Promise<any> {
     const customer = await this.stripe.customers.retrieve(customerId);
     return customer;
@@ -51,7 +82,17 @@ export class StripeGateway implements PaymentGateway {
     return customer;
   }
 
-  async createCheckoutSession(data: UnifyPayload): Promise<any> {
+  async deleteCustomer(customerId: string): Promise<any> {
+    const customer = await this.stripe.customers.del(customerId);
+    return customer;
+  }
+
+  async searchCustomers(query: string, limit: number, page: string): Promise<any> {
+    const customer = await this.stripe.customers.search({ query, limit, page });
+    return customer;
+  }
+
+  async createCheckoutSession(data: CreateCheckoutSessionPayload): Promise<any> {
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: data.payment_method_types,
       line_items: data.items.map((item: any) => ({
@@ -111,23 +152,31 @@ export class StripeGateway implements PaymentGateway {
     return session;
   }
 
-  async retrieveCheckoutSession(id: any): Promise<any> {
-    const session = await this.stripe.checkout.sessions.retrieve(id);
+  async updateCheckoutSession(data: UpdateCheckoutSessionPayload, checkoutId: string): Promise<any> {
+    const session = await this.stripe.checkout.sessions.update(checkoutId, {
+      metadata: data.notes,
+    });
+
     return session;
   }
 
-  async retrieveCheckoutSessionLineItems(id: any): Promise<any> {
-    const session = await this.stripe.checkout.sessions.listLineItems(id);
+  async retrieveCheckoutSession(checkoutId: any): Promise<any> {
+    const session = await this.stripe.checkout.sessions.retrieve(checkoutId);
+    return session;
+  }
+
+  async retrieveCheckoutSessionLineItems(checkoutId: any): Promise<any> {
+    const session = await this.stripe.checkout.sessions.listLineItems(checkoutId);
     return session;
   }
 
   async retrieveAllCheckoutSessions(limit: number): Promise<any> {
-    const session = await this.stripe.checkout.sessions.list({ limit: limit });
+    const session = await this.stripe.checkout.sessions.list({ limit });
     return session;
   }
 
-  async expireCheckoutSession(id: any): Promise<any> {
-    const session = await this.stripe.checkout.sessions.expire(id);
+  async expireCheckoutSession(checkoutId: any): Promise<any> {
+    const session = await this.stripe.checkout.sessions.expire(checkoutId);
     return session;
   }
 

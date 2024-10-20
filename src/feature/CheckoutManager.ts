@@ -20,26 +20,38 @@ export class CheckoutManager {
     return gateway.createCheckoutSession(data);
   }
 
-  public async retrieveCheckoutSession<T extends GatewayType>(
+  public async updateCheckoutSession<T extends GatewayType>(
     gatewayType: T,
-    id: string
+    data: GatewayDataType<T>,
+    checkoutId: string
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-    return gateway.retrieveCheckoutSession(id);
+    return gateway.updateCheckoutSession(data, checkoutId);
+  }
+
+  public async retrieveCheckoutSession<T extends GatewayType>(
+    gatewayType: T,
+    checkoutId: string
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.retrieveCheckoutSession(checkoutId);
   }
 
   public async retrieveCheckoutSessionLineItems<T extends GatewayType>(
     gatewayType: T,
-    id: string
+    checkoutId: string
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-    return gateway.retrieveCheckoutSessionLineItems(id);
+    return gateway.retrieveCheckoutSessionLineItems(checkoutId);
   }
 
   public async retrieveAllCheckoutSessions<T extends GatewayType>(
@@ -55,12 +67,12 @@ export class CheckoutManager {
 
   public async expireCheckoutSession<T extends GatewayType>(
     gatewayType: T,
-    id: string
+    checkoutId: string
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-    return gateway.expireCheckoutSession(id);
+    return gateway.expireCheckoutSession(checkoutId);
   }
 }

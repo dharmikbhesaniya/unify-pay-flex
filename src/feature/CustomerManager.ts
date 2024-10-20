@@ -22,12 +22,59 @@ export class CustomerManager {
 
   public async retrieveCustomer(
     gatewayType: GatewayType,
-    data: any
+    customerId: string
   ): Promise<any> {
     const gateway = this.gatewayManager.getGateway(gatewayType);
     if (!gateway) {
       throw new Error(`${gatewayType} gateway is not configured.`);
     }
-    return gateway.retrieveCustomer(data);
+    return gateway.retrieveCustomer(customerId);
+  }
+
+  public async updateCustomer(
+    gatewayType: GatewayType,
+    data: UnifyCustomerPayload,
+    customerId: string
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.updateCustomer(data, customerId);
+  }
+
+  public async deleteCustomer(
+    gatewayType: GatewayType,
+    customerId: string
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.deleteCustomer(customerId);
+  }
+
+  public async retrieveAllCustomers(
+    gatewayType: GatewayType,
+    limit: number
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.retrieveAllCustomers(limit);
+  }
+
+  public async searchCustomers(
+    gatewayType: GatewayType,
+    query: string,
+    limit: number,
+    page: string
+  ): Promise<any> {
+    const gateway = this.gatewayManager.getGateway(gatewayType);
+    if (!gateway) {
+      throw new Error(`${gatewayType} gateway is not configured.`);
+    }
+    return gateway.searchCustomers(query, limit, page);
   }
 }

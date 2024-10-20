@@ -30,7 +30,8 @@ export interface UnifyCustomerPayload {
     source?: string | undefined; // Stripe | Optional 
     tax?: { ip_address: string | undefined, validate_location: 'deferred' | 'immediately' }; // Stripe | Optional 
     tax_exempt?: "none" | "exempt" | "reverse"; // Stripe | Optional 
-    test_clock: string | undefined; // Stripe | Optional
+    test_clock?: string | undefined; // Stripe | Optional
+    default_source?: string | undefined; // Stripe | Optional
 
 
     fail_existing?: 0 | 1; // Razorpay | Optional  
